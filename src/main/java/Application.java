@@ -50,6 +50,7 @@ public class Application {
         Employee employee1 = new Employee(3, "Вася", "Иванов", "М", 25, 3);
         employeeDAO.createEmployee(employee1);
         employeeDAO.getEmployeeByID(21);
+        employeeDAO.updateEmployee(14);
     }
 }
 

@@ -1,11 +1,13 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class EmployeeDAOImpl implements EmployeeDAO {
     final String user = "postgres";
     final String password = "Strahov1488";
     final String url = "jdbc:postgresql://localhost:5432/db_skypro";
+    Scanner scanner = new Scanner(System.in);
 
     @Override
     public List<Employee> getAllEmployee() {
@@ -94,7 +96,35 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public void updateEmployee(int id) {
+        System.out.println("Введите новое имя");
+        String fn = scanner.nextLine();
+        System.out.println("Введите новую Фамилию");
+        String ln = scanner.nextLine();
+        System.out.println("Введите пол");
+        String gd = scanner.nextLine();
+        System.out.println("Введите возраст");
+        int age = scanner.nextInt();
+        System.out.println("Введите id города");
+        Integer city_id = scanner.nextInt();
+        String sql = "UPDATE employee SET first_name = (?), last_name = (?), gender = (?), age = (?), city_id = (?) WHERE id =" + id;
 
+        try (final Connection connection = DriverManager.getConnection(url, user, password);
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setString(1,fn);
+            statement.setString(2, ln);
+            statement.setString(3, gd);
+            statement.setInt(4, age);
+            statement.setInt(5, city_id);
+
+            int resultSet = statement.executeUpdate();
+            System.out.println("Сотрудник обновлён!");
+
+        } catch (SQLException e) {
+            System.out.println("Ошибка при подключении к БД!");
+            e.printStackTrace();
+        }
     }
 
     @Override

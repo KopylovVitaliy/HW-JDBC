@@ -4,9 +4,9 @@ public class Employee {
     private String last_name;
     private String gender;
     private int age;
-    private String city_id;
+    private Integer city_id;
 
-    public Employee(int id, String first_name, String last_name, String gender, int age, String city_id) {
+    public Employee(int id, String first_name, String last_name, String gender, int age, Integer city_id) {
         this.id = id;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -55,11 +55,11 @@ public class Employee {
         this.age = age;
     }
 
-    public String getCity_id() {
+    public Integer getCity_id() {
         return city_id;
     }
 
-    public void setCity_id(String city_id) {
+    public void setCity_id(Integer city_id) {
         this.city_id = city_id;
     }
 }

@@ -46,6 +46,10 @@ public class Application {
         for (Employee employee : employees){
             System.out.println(employee.getFirst_name());
         }
+        employeeDAO.getEmployeeByID(14);
+        Employee employee1 = new Employee(3, "Вася", "Иванов", "М", 25, 3);
+        employeeDAO.createEmployee(employee1);
+        employeeDAO.getEmployeeByID(21);
     }
 }
 

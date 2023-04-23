@@ -12,7 +12,8 @@ public class Application {
                      DriverManager.getConnection(url, user, password);
 
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM employee")) {
+                     connection.prepareStatement("SELECT employee.id, employee.first_name, employee.gender, employee.age, employee.last_name, city.city_name " +
+                             "FROM employee JOIN city ON employee.city_id = city.city_id")) {
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -25,7 +26,7 @@ public class Application {
                 String namePerson = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
                 String gender = resultSet.getString("gender");
-                String city = resultSet.getString("city_id");
+                String city = resultSet.getString("city_name");
 
                 System.out.println(namePerson + " " + lastName + " " + gender + " Город: " +
                         city);

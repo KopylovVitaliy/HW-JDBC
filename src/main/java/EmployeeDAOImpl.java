@@ -1,3 +1,5 @@
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,91 +11,40 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public List<Employee> getAllEmployee() {
-        List<Employee> employees = new ArrayList<>();
-        try (Connection connection = getConnection()){
-
-             PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM employee");
-
-            ResultSet resultSet = statement.executeQuery();
-
-
-            while (resultSet.next()) {
-
-                int idOfPerson = resultSet.getInt("id");
-                System.out.println("ID работника: " + idOfPerson);
-
-                String namePerson = resultSet.getString("first_name");
-                String lastName = resultSet.getString("last_name");
-                String gender = resultSet.getString("gender");
-                int age = resultSet.getInt("age");
-                Integer city = resultSet.getInt("city_id");
-
-                employees.add(new Employee(idOfPerson, namePerson, lastName, gender, age, city));
-
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Ошибка при подключении к БД!");
-            e.printStackTrace();
-        }
+        List<Employee> employees;
+        EntityManager manager = PersistenceUtil.getEm();
+        manager.getTransaction().begin();
+        String JPQL = "SELECT s FROM Employee s";
+        TypedQuery<Employee> query = manager.createQuery(JPQL, Employee.class);
+        employees = query.getResultList();
+        manager.getTransaction().commit();
+        manager.close();
+        employees.forEach(System.out::println);
         return employees;
     }
 
     @Override
-    public void getEmployeeByID(int id) {
-        String sql = "SELECT employee.id, employee.first_name, employee.gender, employee.age, employee.last_name, city.city_name " +
-                "FROM employee JOIN city ON employee.city_id = city.city_id WHERE id=" + id;
-
-        try (Connection connection = getConnection()){
-             PreparedStatement statement =
-                     connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-
-                int idOfPerson = resultSet.getInt("id");
-                System.out.println("ID работника: " + idOfPerson);
-
-                String namePerson = resultSet.getString("first_name");
-                String lastName = resultSet.getString("last_name");
-                String gender = resultSet.getString("gender");
-                int age = resultSet.getInt("age");
-                String city_name = resultSet.getString("city_name");
-                System.out.println(namePerson + " " + lastName + " " + gender + " возраст: " + age + " город: " + city_name);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Ошибка при подключении к БД!");
-            e.printStackTrace();
-        }
+    public Employee getEmployeeByID(int id) {
+        EntityManager manager = PersistenceUtil.getEm();
+        manager.getTransaction().begin();
+        Employee employee = manager.find(Employee.class, id);
+        manager.getTransaction().commit();
+        System.out.println(employee);
+        manager.close();
+        return employee;
     }
-
 
     @Override
     public void createEmployee(Employee employee) {
-        String sql = "INSERT INTO employee(first_name, last_name, gender, age, city_id) VALUES (?, ?, ?, ?, ?)";
-
-        try (Connection connection = getConnection()){
-             PreparedStatement statement =
-                     connection.prepareStatement(sql);
-            statement.setString(1, employee.getFirst_name());
-            statement.setString(2, employee.getLast_name());
-            statement.setString(3, employee.getGender());
-            statement.setInt(4, employee.getAge());
-            statement.setInt(5, employee.getCity_id());
-            int resultSet = statement.executeUpdate();
-            System.out.println("Сотрудник добавлен!");
-
-        } catch (SQLException e) {
-            System.out.println("Ошибка при подключении к БД!");
-            e.printStackTrace();
-        }
-
+        EntityManager manager = PersistenceUtil.getEm();
+        manager.getTransaction().begin();
+        manager.persist(employee);
+        manager.getTransaction().commit();
+        manager.close();
     }
 
     @Override
-    public void updateEmployee(int id) {
+    public void updateEmployee(Employee employee) {
         System.out.println("Введите новое имя");
         String fn = scanner.nextLine();
         System.out.println("Введите новую Фамилию");
@@ -104,39 +55,29 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         int age = scanner.nextInt();
         System.out.println("Введите id города");
         Integer city_id = scanner.nextInt();
-        String sql = "UPDATE employee SET first_name = (?), last_name = (?), gender = (?), age = (?), city_id = (?) WHERE id =" + id;
+        employee.setFirst_name(fn);
+        employee.setLast_name(ln);
+        employee.setGender(gd);
+        employee.setAge(age);
+        employee.setCity_id(city_id);
 
-        try (Connection connection = getConnection()){
-             PreparedStatement statement =
-                     connection.prepareStatement(sql);
-
-            statement.setString(1, fn);
-            statement.setString(2, ln);
-            statement.setString(3, gd);
-            statement.setInt(4, age);
-            statement.setInt(5, city_id);
-
-            int resultSet = statement.executeUpdate();
-            System.out.println("Сотрудник обновлён!");
-
-        } catch (SQLException e) {
-            System.out.println("Ошибка при подключении к БД!");
-            e.printStackTrace();
-        }
+        EntityManager manager = PersistenceUtil.getEm();
+        manager.getTransaction().begin();
+        manager.merge(employee);
+        manager.getTransaction().commit();
+        manager.close();
+        System.out.println("Сотрудник" + employee.getId() + " обновлён!");
     }
 
     @Override
-    public void deleteEmployee(int id) {
-        String sql = "DELETE FROM employee WHERE id=" + id;
-        try (Connection connection = getConnection()){
-             PreparedStatement statement =
-                     connection.prepareStatement(sql);
-            int resultSet = statement.executeUpdate();
-
-        } catch (SQLException e) {
-            System.out.println("Ошибка при подключении к БД!");
-            e.printStackTrace();
-        }
+    public void deleteEmployee(Employee employee) {
+    EntityManager manager = PersistenceUtil.getEm();
+    manager.getTransaction().begin();
+    Employee employee1 = manager.find(Employee.class, employee.getId());
+    manager.remove(employee1);
+    manager.getTransaction().commit();
+    manager.close();
+    System.out.println("Сотрудник " + employee + " удалён.");
     }
     private static Connection getConnection() throws SQLException{
         String user = "postgres";

@@ -1,5 +1,6 @@
+import javax.persistence.EntityManager;
 import java.sql.*;
-import java.util.List;
+
 
 public class Application {
     public static void main(String[] args) {
@@ -38,19 +39,28 @@ public class Application {
             e.printStackTrace();
         }
         EmployeeDAO employeeDAO = new EmployeeDAOImpl();
-        List<Employee> employees = employeeDAO.getAllEmployee();
-        for (Employee employee : employees){
-            System.out.println(employee.getFirst_name());
-        }
+//        List<Employee> employees = employeeDAO.getAllEmployee();
+//        for (Employee employee : employees) {
+//            System.out.println(employee.getFirst_name());
+//        }
+//
+//        employeeDAO.deleteEmployee(1);
+//        for (Employee employee : employees) {
+//            System.out.println(employee.getFirst_name());
+//        }
+//        employeeDAO.getEmployeeByID(48);
+//        Employee employee1 = new Employee(3, "Вася", "Иванов", "М", 25, 3);
+//        employeeDAO.createEmployee(employee1);
+//        employeeDAO.getAllEmployee();
 
-        employeeDAO.deleteEmployee(1);
-        for (Employee employee : employees){
-            System.out.println(employee.getFirst_name());
-        }
-        employeeDAO.getEmployeeByID(48);
-        Employee employee1 = new Employee(3, "Вася", "Иванов", "М", 25, 3);
-        employeeDAO.createEmployee(employee1);
-        employeeDAO.getAllEmployee();
+
+
+        EntityManager manager = PersistenceUtil.getEm();
+        Employee employee = manager.find(Employee.class, 69);
+        manager.close();
+        System.out.println(employee);
+
+
     }
 }
 

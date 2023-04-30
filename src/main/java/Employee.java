@@ -14,7 +14,7 @@ public class Employee {
     private String gender;
     @Column(name = "age")
     private int age;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private City city;
 

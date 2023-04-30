@@ -1,7 +1,6 @@
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -47,6 +46,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public void updateEmployee(Employee employee) {
+        CityDao cityDao = new CityDAOIpl();
         System.out.println("Введите новое имя");
         String fn = scanner.nextLine();
         System.out.println("Введите новую Фамилию");
@@ -56,10 +56,12 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         System.out.println("Введите возраст");
         int age = scanner.nextInt();
         System.out.println("Введите id города");
+        int city_id = scanner.nextInt();
         employee.setFirst_name(fn);
         employee.setLast_name(ln);
         employee.setGender(gd);
         employee.setAge(age);
+        employee.setCity(cityDao.getCityByID(city_id));
 
         EntityManager manager = PersistenceUtil.getEm();
         manager.getTransaction().begin();

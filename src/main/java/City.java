@@ -10,7 +10,7 @@ public class City {
     @Column(name = "city_name")
     private String city_name;
 
-    @OneToMany(mappedBy = "city", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "city", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Employee> employee;
 
 

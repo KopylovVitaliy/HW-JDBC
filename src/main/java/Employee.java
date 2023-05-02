@@ -1,6 +1,7 @@
 import javax.persistence.*;
 
 @Entity
+@Table(name = "Employee")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,16 +14,16 @@ public class Employee {
     private String gender;
     @Column(name = "age")
     private int age;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id")
+    private City city;
 
-    private Integer city_id;
-
-    public Employee(String first_name, String last_name, String gender, int age, Integer city_id) {
-        this.id = id;
+    public Employee(String first_name, String last_name, String gender, int age, City city) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.gender = gender;
         this.age = age;
-        this.city_id = city_id;
+        this.city = city;
     }
 
     public Employee() {
@@ -69,12 +70,12 @@ public class Employee {
         this.age = age;
     }
 
-    public Integer getCity_id() {
-        return city_id;
+    public City getCity() {
+        return city;
     }
 
-    public void setCity_id(Integer city_id) {
-        this.city_id = city_id;
+    public void setCity(City city) {
+        this.city = city;
     }
 
     @Override
@@ -84,6 +85,6 @@ public class Employee {
                 ", Фамилия " + last_name  +
                 ", пол: " + gender  +
                 ", возраст: " + age +
-                ", city_id= " + city_id;
+                ", city: " + city;
     }
 }
